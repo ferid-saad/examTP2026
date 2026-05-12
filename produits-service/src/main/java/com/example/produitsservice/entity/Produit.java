@@ -1,25 +1,39 @@
 package com.example.produitsservice.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.io.Serializable;
+import com.example.produitsservice.entity.Categorie;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-@Table(name = "produit")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Produit implements Serializable {
-
+public class Produit {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
-
     private String nom;
-    private Double prix;
-    private int stock;
+    private double prix;
+    private int quantite;
 
     @ManyToOne
-    @JoinColumn(name = "categorie_id")
     private Categorie categorie;
+
+    // Constructeur vide obligatoire pour JPA
+    public Produit() {}
+
+    // Constructeur avec arguments
+    public Produit(Long id, String nom, double prix, int quantite, Categorie categorie) {
+        this.id = id;
+        this.nom = nom;
+        this.prix = prix;
+        this.quantite = quantite;
+        this.categorie = categorie;
+    }
+
+    // Getters et setters
+    public Long getId() { return id; }
+    public String getNom() { return nom; }
+    public double getPrix() { return prix; }
+    public int getQuantite() { return quantite; }
+    public Categorie getCategorie() { return categorie; }
 }

@@ -12,6 +12,10 @@
     </parent>
 
     <artifactId>eureka-server</artifactId>
+    <properties>
+        <java.version>25</java.version>
+        <spring.classformat.ignore>true</spring.classformat.ignore>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -22,6 +26,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -29,6 +34,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.example.eurekaserver.EurekaServerApplication</mainClass>
+                    <jvmArguments>-Dspring.classformat.ignore=true</jvmArguments>
+                </configuration>
+
             </plugin>
         </plugins>
     </build>

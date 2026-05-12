@@ -11,7 +11,7 @@
 - Java 21+
 - Maven 3.8+
 - Docker & Docker Compose
-- Flutter 3.x
+- Flutter 3.xcd
 
 ## Lancement avec Docker
 ```bash
