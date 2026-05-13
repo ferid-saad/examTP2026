@@ -25,13 +25,15 @@ class ProduitRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        categorie = new Categorie(null, "Informatique");
+        categorie = new Categorie("Informatique");  // Supposons que Categorie a un constructeur avec nom
+        // ou si Categorie a besoin d'un ID: categorie = new Categorie(null, "Informatique");
         entityManager.persist(categorie);
     }
 
     @Test
     void testSaveProduit() {
-        Produit produit = new Produit(null, "PC Portable", 1200.0, 10, categorie);
+        // Utiliser le constructeur sans ID (4 paramètres)
+        Produit produit = new Produit("PC Portable", 1200.0, 10, categorie);
         Produit saved = produitRepository.save(produit);
 
         assertNotNull(saved.getId());

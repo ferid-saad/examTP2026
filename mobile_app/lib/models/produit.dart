@@ -16,7 +16,7 @@ class Produit {
       id: json['id'],
       nom: json['nom'],
       prix: json['prix'].toDouble(),
-      stock: json['stock'],
+      stock: json['quantite'], // corrigé : 'stock' → 'quantite'
     );
   }
 }

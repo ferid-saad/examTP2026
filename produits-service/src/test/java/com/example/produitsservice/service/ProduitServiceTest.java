@@ -30,7 +30,8 @@ class ProduitServiceTest {
     @BeforeEach
     void setUp() {
         Categorie categorie = new Categorie(1L, "Informatique");
-        produit = new Produit(1L, "PC Portable", 1200.0, 10, categorie);
+        Produit produit = new Produit("Test", 99.99, 10, categorie);
+        produit.setId(1L);
     }
 
     @Test
