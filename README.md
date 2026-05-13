@@ -20,7 +20,7 @@ docker-compose up --build
 ```
 
 ## Lancement sans Docker
-1. Démarrer PostgreSQL et Redis
+1. Démarrer PostgreSQL et Redis:docker run -d -p 6379:6379 redis
 2. Lancer eureka-server
 3. Lancer produits-service
 4. Lancer avis-service
