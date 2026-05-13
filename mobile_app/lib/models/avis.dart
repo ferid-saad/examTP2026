@@ -13,10 +13,18 @@ class Avis {
 
   factory Avis.fromJson(Map<String, dynamic> json) {
     return Avis(
-      id: json['id'],
-      auteur: json['auteur'],
-      commentaire: json['commentaire'],
-      note: json['note'],
+      id: json['id'] ?? 0,
+      auteur: json['auteur'] ?? '',
+      commentaire: json['commentaire'] ?? '',
+      note: json['note'] ?? 0,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'auteur': auteur,
+      'commentaire': commentaire,
+      'note': note,
+    };
   }
 }
