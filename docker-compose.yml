@@ -1,52 +1,60 @@
-version: '3.8'
-
 services:
-
-  # ── Bases de données ──────────────────────────
   postgres-produits:
-    image: postgres:16
+    image: postgres:15-alpine
     container_name: postgres-produits
     environment:
       POSTGRES_DB: produits_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: 071013
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_produits_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - examtp2026-network
 
   postgres-avis:
-    image: postgres:16
+    image: postgres:15-alpine
     container_name: postgres-avis
     environment:
       POSTGRES_DB: avis_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: 071013
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres_avis_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - examtp2026-network
 
-  # ── Redis ─────────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - examtp2026-network
 
-  # ── Eureka Server ─────────────────────────────
   eureka-server:
     build: ./eureka-server
     container_name: eureka-server
     ports:
       - "8761:8761"
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8761/actuator/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    networks:
+      - examtp2026-network
+    environment:
+      EUREKA_SERVER_ENABLE_SELF_PRESERVATION: "false"
 
-  # ── Produits Service ──────────────────────────
   produits-service:
     build: ./produits-service
     container_name: produits-service
@@ -55,16 +63,20 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-produits:5432/produits_db
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_PASSWORD: 071013
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      - postgres-produits
-      - redis
-      - eureka-server
+      postgres-produits:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+    networks:
+      - examtp2026-network
 
-  # ── Avis Service ──────────────────────────────
   avis-service:
     build: ./avis-service
     container_name: avis-service
@@ -73,13 +85,16 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-avis:5432/avis_db
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_PASSWORD: 071013
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      - postgres-avis
-      - eureka-server
+      postgres-avis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - examtp2026-network
 
-  # ── API Gateway ───────────────────────────────
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
@@ -88,7 +103,14 @@ services:
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_started
+    networks:
+      - examtp2026-network
+
+networks:
+  examtp2026-network:
+    driver: bridge
 
 volumes:
   postgres_produits_data:
